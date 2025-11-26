@@ -1,9 +1,16 @@
-from typing import List, Optional
+from typing import List, Optional, cast
 
 from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from fhir.resources.bundle import Bundle, BundleEntry
 from fhir.resources.patient import Patient as FHIRPatient
+from fhir.resources.fhirtypes import (
+    ResourceType,
+    Uri,
+    Code,
+    UnsignedInt,
+    BundleEntryType,
+)
 
 from app.database import Patient
 from app.fhir_utils import create_fhir_patient
@@ -34,15 +41,17 @@ def search_patients(db: Session, search_term: Optional[str] = None) -> Bundle:
 def _create_search_bundle(patients: list[FHIRPatient]) -> Bundle:
     entries: List[BundleEntry] = []
     for patient in patients:
-        entry = BundleEntry(  # type: ignore[call-arg, arg-type]
-            resource=patient, full_url=f"urn:uuid:{patient.id}"  # type: ignore[arg-type]
+        entry = BundleEntry(  # type: ignore[call-arg]
+            resource=cast(ResourceType, patient), fullUrl=Uri(f"urn:uuid:{patient.id}")
         )
         entries.append(entry)
 
     assert entries is not None
 
-    bundle = Bundle(  # type: ignore[call-arg, arg-type]
-        type="searchset", total=len(patients), entry=entries  # type: ignore[arg-type]
+    bundle = Bundle(  # type: ignore[call-arg]
+        type=Code("searchset"),
+        total=UnsignedInt(len(patients)),
+        entry=cast(List[BundleEntryType], entries),
     )
 
     return bundle

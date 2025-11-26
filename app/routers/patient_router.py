@@ -38,4 +38,4 @@ async def get_patients(
     db: Session = Depends(get_db),
 ):
     bundle: Bundle = search_patients(db, search_term=search)
-    return bundle.model_dump(exclude_none=True, by_alias=True)  # type: ignore[attr-defined]
+    return bundle.dict(exclude_none=True, by_alias=True)
