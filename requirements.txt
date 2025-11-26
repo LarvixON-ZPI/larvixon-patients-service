@@ -1,0 +1,6 @@
+fastapi==0.115.0
+uvicorn[standard]==0.32.0
+fhir.resources==7.1.0
+pydantic==2.9.2
+sqlalchemy==2.0.36
+faker==33.1.0
