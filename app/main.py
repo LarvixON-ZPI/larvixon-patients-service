@@ -3,6 +3,7 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.responses import RedirectResponse
 
 from app.database.utils import check_if_has_patients
 from app.routers import patient_router
@@ -46,14 +47,10 @@ app = FastAPI(
 app.include_router(patient_router, prefix="/api/v1")
 
 
-@app.get("/", tags=["health"])
+@app.get("/")
 async def root():
-    """Health check endpoint."""
-    return {
-        "service": "Larvixon Patients Service",
-        "status": "healthy",
-        "fhir_version": "R4",
-    }
+    # redirect to API docs
+    return RedirectResponse(url="/docs")
 
 
 @app.get("/health", tags=["health"])
