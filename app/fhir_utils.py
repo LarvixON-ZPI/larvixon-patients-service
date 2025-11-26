@@ -19,7 +19,7 @@ from fhir.resources.fhirtypes import (
 
 
 def create_fhir_patient(patient_data: dict[str, Any]) -> Patient:
-    identifiers = [
+    identifiers: list[Identifier] = [
         Identifier(  # type: ignore[call-arg]
             system=Uri("http://hl7.org/fhir/sid/pesel"),
             value=patient_data["pesel"],
@@ -27,7 +27,7 @@ def create_fhir_patient(patient_data: dict[str, Any]) -> Patient:
         )
     ]
 
-    names = [
+    names: list[HumanName] = [
         HumanName(  # type: ignore[call-arg]
             use=Code("official"),
             family=patient_data["last_name"],

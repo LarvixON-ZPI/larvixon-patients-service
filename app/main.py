@@ -1,6 +1,7 @@
 """FastAPI application for Larvixon Patients Service."""
 
 from contextlib import asynccontextmanager
+import logging
 
 from fastapi import FastAPI
 from fastapi.responses import RedirectResponse
@@ -8,7 +9,9 @@ from fastapi.responses import RedirectResponse
 from app.database.utils import check_if_has_patients
 from app.routers import patient_router
 from app.database import init_db
-from app.database.seed import seed_database
+from app.database.commands.seed import seed_database
+
+logging.basicConfig(level=logging.INFO)
 
 
 @asynccontextmanager

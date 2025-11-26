@@ -11,16 +11,17 @@ from fhir.resources.fhirtypes import (
     UnsignedInt,
     BundleEntryType,
 )
+from sqlalchemy.orm.query import Query
 
 from app.database import Patient
 from app.fhir_utils import create_fhir_patient
 
 
 def search_patients(db: Session, search_term: Optional[str] = None) -> Bundle:
-    query = db.query(Patient)
+    query: Query[Patient] = db.query(Patient)
 
     if search_term:
-        search_pattern = f"%{search_term}%"
+        search_pattern: str = f"%{search_term}%"
         query = query.filter(
             or_(
                 Patient.pesel.like(search_pattern),
@@ -29,11 +30,13 @@ def search_patients(db: Session, search_term: Optional[str] = None) -> Bundle:
             )
         )
 
-    patients = query.all()
+    patients: List[Patient] = query.all()
 
-    fhir_patients = [create_fhir_patient(p.to_dict()) for p in patients]
+    fhir_patients: List[FHIRPatient] = [
+        create_fhir_patient(p.to_dict()) for p in patients
+    ]
 
-    bundle = _create_search_bundle(fhir_patients)
+    bundle: Bundle = _create_search_bundle(fhir_patients)
 
     return bundle
 
@@ -42,7 +45,8 @@ def _create_search_bundle(patients: list[FHIRPatient]) -> Bundle:
     entries: List[BundleEntry] = []
     for patient in patients:
         entry = BundleEntry(  # type: ignore[call-arg]
-            resource=cast(ResourceType, patient), fullUrl=Uri(f"urn:uuid:{patient.id}")
+            resource=cast(ResourceType, patient),
+            fullUrl=Uri(f"urn:uuid:{patient.id}"),
         )
         entries.append(entry)
 
