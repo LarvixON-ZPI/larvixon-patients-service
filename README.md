@@ -4,8 +4,10 @@ A FastAPI service providing mocked patient data using Fast Healthcare Interopera
 
 ## Development
 
+With the default port of '8001'
+
 ```sh
-python -m uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload --port 8001
 ```
 
 ### Database commands

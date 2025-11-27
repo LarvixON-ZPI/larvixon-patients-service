@@ -12,6 +12,7 @@ from fhir.resources.fhirtypes import (
     BundleEntryType,
 )
 from sqlalchemy.orm.query import Query
+from fastapi import HTTPException
 
 from app.database import Patient
 from app.fhir_utils import create_fhir_patient
@@ -39,6 +40,20 @@ def search_patients(db: Session, search_term: Optional[str] = None) -> Bundle:
     bundle: Bundle = _create_search_bundle(fhir_patients)
 
     return bundle
+
+
+def get_patient_by_guid(db: Session, guid: str) -> FHIRPatient:
+    patient: Optional[Patient] = (
+        db.query(Patient).filter(Patient.internal_guid == guid).first()
+    )
+
+    if not patient:
+        raise HTTPException(
+            status_code=404, detail=f"Patient with GUID {guid} not found"
+        )
+
+    fhir_patient: FHIRPatient = create_fhir_patient(patient.to_dict())
+    return fhir_patient
 
 
 def _create_search_bundle(patients: list[FHIRPatient]) -> Bundle:

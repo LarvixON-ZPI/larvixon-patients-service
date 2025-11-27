@@ -7,7 +7,7 @@ from fhir.resources.bundle import Bundle
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.services.patient_service import search_patients
+from app.services.patient_service import search_patients, get_patient_by_guid
 
 router = APIRouter(prefix="/patients", tags=["patients"])
 
@@ -39,3 +39,21 @@ async def get_patients(
 ):
     bundle: Bundle = search_patients(db, search_term=search)
     return bundle.dict(exclude_none=True, by_alias=True)
+
+
+@router.get(
+    "/{guid}",
+    summary="Get patient by GUID",
+    description="""
+    Retrieve a single patient by their internal GUID.
+    
+    Returns a FHIR Patient resource.
+    """,
+    response_description="FHIR Patient resource",
+)
+async def get_patient(
+    guid: str,
+    db: Session = Depends(get_db),
+):
+    patient = get_patient_by_guid(db, guid)
+    return patient.dict(exclude_none=True, by_alias=True)
