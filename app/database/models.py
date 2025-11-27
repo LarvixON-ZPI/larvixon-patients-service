@@ -31,7 +31,7 @@ class Patient(Base):
 
     def to_dict(self) -> dict:
         return {
-            "id": f"patient-{self.id:03d}",
+            "id": f"patient-{self.id:03d}" if self.id is not None else None,
             "pesel": self.pesel,
             "internal_guid": self.internal_guid,
             "first_name": self.first_name,
@@ -83,3 +83,10 @@ class Patient(Base):
             "postal_code": fake.postcode(),
             "country": "PL",
         }
+
+
+if __name__ == "__main__":
+    fake = faker.Faker("pl_PL")
+    patient_data = Patient.create_fake_patient(fake)
+    patient = Patient(**patient_data)
+    print(patient.to_dict())

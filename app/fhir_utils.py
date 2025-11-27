@@ -67,7 +67,7 @@ def create_fhir_patient(patient_data: dict[str, Any]) -> Patient:
         )
 
     patient = Patient(  # type: ignore[call-arg]
-        id=patient_data["id"],
+        id=patient_data["internal_guid"],
         identifier=cast(list[IdentifierType], identifiers),
         name=cast(list[HumanNameType], names),
         gender=Code(patient_data.get("gender")),
