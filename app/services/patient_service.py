@@ -56,6 +56,19 @@ def get_patient_by_guid(db: Session, guid: str) -> FHIRPatient:
     return fhir_patient
 
 
+def get_patients_by_guids(db: Session, guids: List[str]) -> Bundle:
+    patients: List[Patient] = (
+        db.query(Patient).filter(Patient.internal_guid.in_(guids)).all()
+    )
+
+    fhir_patients: List[FHIRPatient] = [
+        create_fhir_patient(p.to_dict()) for p in patients
+    ]
+
+    bundle: Bundle = _create_search_bundle(fhir_patients)
+    return bundle
+
+
 def _create_search_bundle(patients: list[FHIRPatient]) -> Bundle:
     entries: List[BundleEntry] = []
     for patient in patients:

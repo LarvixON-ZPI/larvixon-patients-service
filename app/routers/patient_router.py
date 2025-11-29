@@ -1,13 +1,19 @@
 """Patient router for FHIR-compliant patient endpoints."""
 
-from typing import Optional
+from typing import Optional, List
 
 from fastapi import APIRouter, Query, Depends
 from fhir.resources.bundle import Bundle
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.services.patient_service import search_patients, get_patient_by_guid
+from app.routers.requests.patients_guids_request import PatientGuidsRequest
+from app.services.patient_service import (
+    search_patients,
+    get_patient_by_guid,
+    get_patients_by_guids,
+)
 
 router = APIRouter(prefix="/patients", tags=["patients"])
 
@@ -38,6 +44,25 @@ async def get_patients(
     db: Session = Depends(get_db),
 ):
     bundle: Bundle = search_patients(db, search_term=search)
+    return bundle.dict(exclude_none=True, by_alias=True)
+
+
+@router.post(
+    "/patients-by-guids",
+    summary="Get patients by GUIDs",
+    description="""
+    Retrieve multiple patients by their internal GUIDs.
+    
+    Returns a FHIR Bundle containing Patient resources for all found GUIDs.
+    Patients that don't exist are silently excluded from the results.
+    """,
+    response_description="FHIR Bundle containing Patient resources",
+)
+async def get_patients_by_guid_list(
+    request: PatientGuidsRequest,
+    db: Session = Depends(get_db),
+):
+    bundle: Bundle = get_patients_by_guids(db, request.guids)
     return bundle.dict(exclude_none=True, by_alias=True)
 
 
