@@ -6,7 +6,7 @@ from sqlalchemy.orm import sessionmaker, Session
 
 from .models import Base
 
-DATABASE_PATH: Path = Path(__file__).parent.parent.parent / "patients.db"
+DATABASE_PATH: Path = Path(__file__).parent.parent / "data" / "patients.db"
 DATABASE_URL: str = f"sqlite:///{DATABASE_PATH}"
 
 engine: Engine = create_engine(

@@ -12,14 +12,20 @@ python -m uvicorn app.main:app --reload --port 8001
 
 ### Database commands
 
-Seed database
+#### Seed database
 
 ```sh
 python -m app.database.commands.seed
 ```
 
-Clear database
+#### Clear database
 
 ```sh
 python -m app.database.commands.clear
+```
+
+#### Print first X patients
+
+```sh
+python -m app.database.commands.print_x_first_patients <X>
 ```
