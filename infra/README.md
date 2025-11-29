@@ -43,7 +43,7 @@ terraform apply -target=azurerm_container_registry.main
 ```bash
 # Variables
 ACR_NAME="larvixonpatientsdevacr" # Check your terraform output or vars
-TAG="v1"                          # Must match var.image_tag in terraform.tfvars
+TAG="f4c8234"                     # Must match var.image_tag in terraform.tfvars
 
 # Login & Push
 az acr login --name $ACR_NAME

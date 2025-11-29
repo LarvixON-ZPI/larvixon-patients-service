@@ -15,8 +15,9 @@ NO_PESEL_PROBABILITY: float = 0.1
 class Patient(Base):
     __tablename__ = "patients"
 
-    id: Column[int] = Column(Integer, primary_key=True, autoincrement=True)
-    internal_guid: Column[str] = Column(String, unique=True, nullable=False)
+    internal_guid: Column[str] = Column(
+        String, primary_key=True, unique=True, nullable=False
+    )
     pesel: Column[str] = Column(String(11), unique=True, nullable=True, index=True)
     first_name: Column[str] = Column(String(100), nullable=False, index=True)
     last_name: Column[str] = Column(String(100), nullable=False, index=True)
@@ -31,7 +32,6 @@ class Patient(Base):
 
     def to_dict(self) -> dict:
         return {
-            "id": f"patient-{self.id:03d}" if self.id is not None else None,
             "pesel": self.pesel,
             "internal_guid": self.internal_guid,
             "first_name": self.first_name,
@@ -66,7 +66,7 @@ class Patient(Base):
         birth_date = fake.date_of_birth(minimum_age=1, maximum_age=100)
 
         pesel: str | None = None
-        if random.random() < NO_PESEL_PROBABILITY:
+        if random.random() > NO_PESEL_PROBABILITY:
             pesel = fake.pesel(cast(datetime, birth_date), gender)
 
         return {
