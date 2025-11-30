@@ -1,5 +1,3 @@
-"""FHIR Patient resource utilities."""
-
 from typing import Any, cast
 
 from fhir.resources.patient import Patient

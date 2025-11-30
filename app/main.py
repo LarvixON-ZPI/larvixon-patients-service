@@ -1,5 +1,3 @@
-"""FastAPI application for Larvixon Patients Service."""
-
 from contextlib import asynccontextmanager
 import logging
 
@@ -36,6 +34,10 @@ app = FastAPI(
     - Search patients by PESEL, first name, or last name
     - FHIR R4 compliant Patient resources
     - Returns FHIR Bundle for search results
+    
+    ## Limitations
+    
+    Always returns a maximum of 100 patients per search request.
     """,
     version="1.0.0",
     contact={
@@ -58,5 +60,4 @@ async def root():
 
 @app.get("/health", tags=["health"])
 async def health_check():
-    """Health check endpoint."""
     return {"status": "healthy"}
