@@ -1,5 +1,4 @@
 from typing import List, Optional, cast
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
 from fhir.resources.bundle import Bundle, BundleEntry
 from fhir.resources.patient import Patient as FHIRPatient
@@ -39,7 +38,7 @@ def search_patients(
         filters.append(Patient.pesel.like(f"%{pesel}%"))
 
     if filters:
-        query = query.filter(or_(*filters))
+        query = query.filter(*filters)
 
     query = query.limit(ROWS_LIMIT)
 
