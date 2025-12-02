@@ -1,4 +1,5 @@
 import logging
+import sys
 from typing import Any
 
 from faker import Faker
@@ -54,6 +55,18 @@ def seed_database(num_patients: int = 50) -> int:
     return created_count
 
 
+def main():
+    if len(sys.argv) != 2:
+        print("Usage: python -m app.database.commands.print_x_first_patients <x>")
+        sys.exit(1)
+    try:
+        x = int(sys.argv[1])
+    except ValueError:
+        print("x must be an integer.")
+        sys.exit(1)
+    seed_database(x)
+
+
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO)
-    seed_database(50)
+    main()
