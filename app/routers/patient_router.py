@@ -1,6 +1,9 @@
+import os
 from typing import Optional
 
-from fastapi import APIRouter, Query, Depends
+from dotenv import load_dotenv
+from fastapi import APIRouter, HTTPException, Depends
+from fastapi.params import Header
 from fhir.resources.bundle import Bundle
 from sqlalchemy.orm import Session
 
@@ -12,7 +15,20 @@ from app.services.patient_service import (
     get_patients_by_guids,
 )
 
-router = APIRouter(prefix="/patients", tags=["patients"])
+load_dotenv()
+valid_tokens: list[str] = os.getenv("API_TOKENS", "").split(";")
+
+
+def verify_token(x_api_token=Header(None)) -> None:
+    if x_api_token not in valid_tokens:
+        raise HTTPException(401, "Invalid API token")
+
+
+router = APIRouter(
+    prefix="/patients",
+    tags=["patients"],
+    dependencies=[Depends(verify_token)],
+)
 
 
 @router.get(
